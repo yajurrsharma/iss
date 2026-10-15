@@ -1,10 +1,10 @@
 from database import get_all
 from skyfield.api import load
 from main import *
-import datetime
+
+
 
 users = get_all()
-
 if not users:
     exit()
 
@@ -37,7 +37,8 @@ for email, lat, lon in users:
             pass_f = True
 
             """
-            email code
+
+            email code to be
             """
 
             break
