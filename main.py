@@ -39,4 +39,4 @@ sun_alt, sun_az, sun_distance = sun_topocentric.altaz()
 sunlit = satellite.at(t).is_sunlit(eph)
 
 if alt.degrees > 30 and sunlit and sun_alt.degrees < -6:
-    print("The ISS is visible from Patiala right now!")
+    print("iss is visible")
