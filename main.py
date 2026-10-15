@@ -2,41 +2,41 @@ from datetime import datetime
 import json
 from skyfield.api import EarthSatellite, load, wgs84
 
-with load.open('stations.json') as f:
-    data = json.load(f)
+def load_satellite_data(json_path='stations.json'):
+    with load.open(json_path) as f:
+        data = json.load(f)
+    ts = load.timescale()
+    sats = [EarthSatellite.from_omm(ts, fields) for fields in data]
+    by_name = {sat.name: sat for sat in sats}
+    return ts, by_name['ISS (ZARYA)']
 
+def load_ephemeris(bsp_path='de421.bsp'):
+    return load(bsp_path)
 
-ts = load.timescale()
-sats = [EarthSatellite.from_omm(ts, fields) for fields in data]
-# print("loaded", len(sats), "satellites")
+def check_current_visibility(lat, lon):
+    ts, satellite = load_satellite_data()
+    eph = load_ephemeris()
+    
+    t = ts.now()
+    observer = wgs84.latlon(lat, lon)
+    difference = satellite - observer
+    topocentric = difference.at(t)
+    
+    alt, az, distance = topocentric.altaz()
+    
+    earth = eph['earth']
+    sun = eph['sun']
+    sun_topocentric = (earth + observer).at(t).observe(sun).apparent()
+    sun_alt, sun_az, sun_distance = sun_topocentric.altaz()
+    
+    sunlit = satellite.at(t).is_sunlit(eph)
+    
+    if alt.degrees > 30 and sunlit and sun_alt.degrees < -6:
+        return True
+    return False
 
-by_name = {sat.name: sat for sat in sats}
-satellite = by_name['ISS (ZARYA)']
-
-
-t = ts.now()
-
-patiala = wgs84.latlon(30.3260, 76.4019)
-difference = satellite - patiala
-
-topocentric = difference.at(t)
-# print(topocentric.xyz.km) #relative to patiala in gcrs
-
-alt, az, distance = topocentric.altaz()
-
-# print(alt)
-# print(az)
-# print("Distance: {:.1f} km".format(distance.km))
-
-eph = load('de421.bsp')
-
-earth = eph['earth']
-sun = eph['sun']
-
-sun_topocentric = (earth + patiala).at(t).observe(sun).apparent()
-sun_alt, sun_az, sun_distance = sun_topocentric.altaz()
-
-sunlit = satellite.at(t).is_sunlit(eph)
-
-if alt.degrees > 30 and sunlit and sun_alt.degrees < -6:
-    print("iss is visible")
+if __name__ == "__main__":
+    if check_current_visibility(30.3260, 76.4019):
+        print("the iss is visible")
+    else:
+        pass
