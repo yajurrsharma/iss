@@ -1,4 +1,5 @@
 import os
+import requests
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -7,14 +8,10 @@ from skyfield.api import wgs84
 from dotenv import load_dotenv, find_dotenv
 from main import load_satellite_data, load_ephemeris
 
+RENDER_WORKER_URL = "https://iss-worker.onrender.com/api/schedule-alert"
 env_file = find_dotenv()
 has_env =  bool(env_file and os.path.exists(env_file))
 load_dotenv(env_file)
-
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-SMTP_USERNAME = os.getenv("SMTP_USERNAME")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 print("loading ephemeris data.")
 ts, satellite = load_satellite_data('stations.json')
@@ -23,27 +20,19 @@ earth = eph['earth']
 sun = eph['sun']
 print("Ephemeris loaded.")
 
-def send_email(email, pass_f):
-    if not has_env or not SMTP_USERNAME or not SMTP_PASSWORD:
-        return False
+def send_email(email, pass_t, pass_f):
+    pass_time_str = pass_t.utc_datetime().strftime("%Y-%m-%d %H:%M:%S")
+    
+    payload = {
+        "email": email,
+        "pass_time_utc": pass_time_str,
+        "pass_info": pass_f
+    }
+    
     try:
-        msg = MIMEMultipart()
-        msg['From'] = f"Horizon Event Tracker <{SMTP_USERNAME}>"
-        msg['To'] = email
-        msg['Subject'] = "ISS Visibility Alert"
-
-        body = f"""
-        OBSERVATION ALERT
-        
-        {pass_f}
-        """
-        msg.attach(MIMEText(body, 'plain'))
-
-        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_USERNAME, SMTP_PASSWORD)
-            server.send_message(msg)
-            print(f"email sent")
+        response = requests.post(RENDER_WORKER_URL, json=payload, timeout=10)
+        response.raise_for_status()
+        print("dispatched alert to render worker:", response.json())
         return True
     except Exception as e:
         print(f"failed: {e}")
