@@ -38,13 +38,13 @@ def send_email(email, pass_t, pass_f):
         print(f"failed: {e}")
         return False
 
-def process(email, lat, lon):
+def process(email, lat, lon):   
     t_start = ts.now()
     observer = wgs84.latlon(lat, lon)
     
     for day_offset in range(14):
-        start_jd = t_start.tt + day_offset
-        time = ts.tt_jd(start_jd + [m / 1440.0 for m in range(0, 1440, 1)])
+        start_ = t_start.tt + day_offset
+        time = ts.tt_jd(start_ + [m / 1440.0 for m in range(0, 1440, 1)])
 
         iss_sunlit = satellite.at(time).is_sunlit(eph)
         sun_alt, sun_az, sun_distance = (earth + observer).at(time).observe(sun).apparent().altaz()
@@ -81,17 +81,20 @@ def process(email, lat, lon):
             return True, msg
 
     for day_offset in range(3):
-        start_jd = t_start.tt + day_offset
-        time = ts.tt_jd(start_jd + [m / 1440.0 for m in range(0, 1440, 1)])
+        start_ = t_start.tt + day_offset
+        time = ts.tt_jd(start_ + [m / 1440.0 for m in range(0, 1440, 1)])
+
         topo_iss = (satellite - observer).at(time)
         alt_array, az_array, range_array = topo_iss.altaz()
+
+        sun_alt = observer.at(time).observe(sun).apparent() 
 
         in_pass = False
         peak_alt = 0
         pass_peak_time = None
 
         for i in range(len(time)):
-            if alt_array.degrees[i] > 15:
+            if alt_array.degrees[i] > 15 and sun_alt.degrees[i] > -6:
                 if not in_pass:
                     in_pass = True
                     peak_alt = alt_array.degrees[i]
@@ -103,8 +106,12 @@ def process(email, lat, lon):
             else:
                 if in_pass:
                     pass_str = pass_peak_time.utc_datetime().strftime("%Y-%m-%d %H:%M:%S")
-                    msg = f"Next physical pass (Daylight/Low Visibility): {pass_str} UTC (Peak Altitude: {round(peak_alt, 1)}°)"
-                    send_email(email, msg)
+                    msg = f"Next visible pass (Night-time): {pass_str} UTC (Peak Altitude: {round(peak_alt, 1)}°)"
+                    send_email(email, pass_peak_time, msg)
                     return True, msg
+
+                in_pass = False
+                peak_alt = 0
+                peak_pass_time = None
 
     return False, "failed to compute"
