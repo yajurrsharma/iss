@@ -13,30 +13,23 @@ def load_satellite_data(json_path='stations.json'):
 def load_ephemeris(bsp_path='de421.bsp'):
     return load(bsp_path)
 
-def check_current_visibility(lat, lon):
-    ts, satellite = load_satellite_data()
-    eph = load_ephemeris()
-    
-    t = ts.now()
-    observer = wgs84.latlon(lat, lon)
-    difference = satellite - observer
-    topocentric = difference.at(t)
-    
-    alt, az, distance = topocentric.altaz()
-    
-    earth = eph['earth']
-    sun = eph['sun']
-    sun_topocentric = (earth + observer).at(t).observe(sun).apparent()
-    sun_alt, sun_az, sun_distance = sun_topocentric.altaz()
-    
-    sunlit = satellite.at(t).is_sunlit(eph)
-    
-    if alt.degrees > 30 and sunlit and sun_alt.degrees < -6:
-        return True
-    return False
+# ts, satellite = load_satellite_data()
+# eph = load_ephemeris()
 
-if __name__ == "__main__":
-    if check_current_visibility(30.3260, 76.4019):
-        print("the iss is visible")
-    else:
-        pass
+# t = ts.now()
+# observer = wgs84.latlon(lat, lon)
+# difference = satellite - observer
+# topocentric = difference.at(t)
+
+# alt, az, distance = topocentric.altaz()
+
+# earth = eph['earth']
+# sun = eph['sun']
+# sun_topocentric = (earth + observer).at(t).observe(sun).apparent()
+# sun_alt, sun_az, sun_distance = sun_topocentric.altaz()
+
+# sunlit = satellite.at(t).is_sunlit(eph)
+
+# if alt.degrees > 30 and sunlit and sun_alt.degrees < -6:
+#     return True
+# return False
