@@ -22,6 +22,8 @@ def load_ephemeris(bsp_path='de421.bsp'):
 # topocentric = difference.at(t)
 
 # alt, az, distance = topocentric.altaz()
+# print(alt)
+# print(az)
 
 # earth = eph['earth']
 # sun = eph['sun']
@@ -29,6 +31,7 @@ def load_ephemeris(bsp_path='de421.bsp'):
 # sun_alt, sun_az, sun_distance = sun_topocentric.altaz()
 
 # sunlit = satellite.at(t).is_sunlit(eph)
+# print(sunlit)
 
 # if alt.degrees > 30 and sunlit and sun_alt.degrees < -6:
 #     return True

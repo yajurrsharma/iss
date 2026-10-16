@@ -114,4 +114,4 @@ def process(email, lat, lon):
                     send_email(email, msg)
                     return True, msg
 
-    return False, "Unable to compute upcoming trajectory."
+    return False, "failed to compute"
