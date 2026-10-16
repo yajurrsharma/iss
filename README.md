@@ -34,5 +34,5 @@ SMTP_PASSWORD=yourapp_passwordhere
 ```
 and you're done! Save your file, and run the code as you would normally. However, now, you'll be able to recieve emails from, well, yourself about the horizon event!
 
-
+and to end it, i'd say that this project is just there for some fun and banter, and to revisit some old projects that i've wanted to work on/have worked on. this project was also made for the HackClub Expedition, and took around 5 hours over the span of 2 days to build!
 
