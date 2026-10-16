@@ -4,10 +4,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 from skyfield.api import wgs84
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from main import load_satellite_data, load_ephemeris
 
-load_dotenv()
+env_file = find_dotenv()
+has_env =  bool(env_file and os.path.exists(env_file))
+load_dotenv(env_file)
 
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
@@ -22,6 +24,8 @@ sun = eph['sun']
 print("Ephemeris loaded.")
 
 def send_email(email, pass_f):
+    if not has_env or not SMTP_USERNAME or not SMTP_PASSWORD:
+        return False
     try:
         msg = MIMEMultipart()
         msg['From'] = f"Horizon Event Tracker <{SMTP_USERNAME}>"
