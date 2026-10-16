@@ -23,5 +23,18 @@ uvicorn app:app --reload
 ```
 in the directory, and go to `localhost:8000` to see the web app.
 
+---
+
+## Sneaky Feature
+
+I've also added a feature that, unfortunately, in the current stages has to be configured by the user. That feature is the *email notification system*. Basically, when the program finds the next visible pass (whether it be day or night) It'll send you an email when the pass is happening, so you can look out and above your horizon, to, well, see the event! (get it, horizon event?)
+
+to setup the email system, all you need to do create a `.env` file in your cloned directory. Next, if you have 2FA enabled on your email account, simply to go that page, and search for *App Passwords*. Create one, and save it. Finally, just go to your newly created `.env` file, and paste these lines, 
+```bash
+SMTP_USERNAME=youremailhere
+SMTP_PASSWORD=yourapp_passwordhere
+```
+and you're done! Save your file, and run the code as you would normally. However, now, you'll be able to recieve emails from, well, yourself about the horizon event!
+
 
 
