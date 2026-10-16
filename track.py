@@ -87,14 +87,16 @@ def process(email, lat, lon):
         topo_iss = (satellite - observer).at(time)
         alt_array, az_array, range_array = topo_iss.altaz()
 
-        sun_alt = observer.at(time).observe(sun).apparent() 
+        
+        sun_alt_array = (earth + observer).at(time).observe(eph['sun']).apparent().altaz()[0]
 
         in_pass = False
         peak_alt = 0
         pass_peak_time = None
 
         for i in range(len(time)):
-            if alt_array.degrees[i] > 15 and sun_alt.degrees[i] > -6:
+            is_visible = alt_array.degrees[i] > 15 and sun_alt_array.degrees[i] < -6
+            if is_visible:
                 if not in_pass:
                     in_pass = True
                     peak_alt = alt_array.degrees[i]
