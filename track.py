@@ -71,7 +71,7 @@ def process(email, lat, lon):
                 if in_pass:
                     pass_str = pass_peak_time.utc_datetime().strftime("%Y-%m-%d %H:%M:%S")
                     msg = f"Next visible night pass: {pass_str} UTC (Peak Altitude: {round(peak_alt, 1)}°)"
-                    send_email(email, msg)
+                    send_email(email, pass_peak_time, msg)
                     return True, msg
         
         if in_pass and pass_peak_time:
