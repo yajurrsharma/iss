@@ -23,8 +23,6 @@ uvicorn app:app --reload
 ```
 in the directory, and go to `localhost:8000` to see the web app.
 
----
-
 ## Sneaky Feature 
 
 I've also added a feature that, unfortunately, in the current stages has to be configured by the user. That feature is the *email notification system*. Basically, when the program finds the next visible pass (whether it be day or night), it'll send you an email when the pass is happening, so you can look out and above your horizon, to, well, see the event! (get it? horizon event? okay yeah ill stop)
