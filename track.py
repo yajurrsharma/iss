@@ -141,4 +141,4 @@ def process(email, lat, lon):
                 peak_alt = 0
                 peak_pass_time = None
 
-    return False, "failed to compute"
+    return False, "no visible night passes found in the next 2 weeks."
