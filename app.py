@@ -9,8 +9,13 @@ app = FastAPI()
 @app.post("/api/track")
 def track(email: EmailStr = Form(...), lat: float = Form(...), lon: float = Form(...)):
     pass_f, message = process(email, lat, lon)
-    return {"status": "success" if pass_f else "info", "message": message}
+    
+    if not pass_f:
+        raise HTTPException(status_code=400, detail=message)
+        
+    return {"status": "success", "message": message}
 
+    
 app.mount("/static", StaticFiles(directory="."), name="static")
 
 @app.get("/")

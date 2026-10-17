@@ -7,6 +7,7 @@ from datetime import datetime
 from skyfield.api import wgs84
 from dotenv import load_dotenv, find_dotenv
 from main import load_satellite_data, load_ephemeris
+from email_validator import validate_email, EmailNotValidError
 
 RENDER_WORKER_URL = "https://iss-worker.onrender.com/api/schedule-alert"
 env_file = find_dotenv()
@@ -20,12 +21,26 @@ earth = eph['earth']
 sun = eph['sun']
 print("Ephemeris loaded.")
 
+def is_valid(email):
+    try:
+        valid = validate_email(email, check_deliverability=True)
+        return True
+    except EmailNotValidError as e:
+        print(str(e))
+        return False
+    except Exception as e:
+        return False
+
 def send_email(email, pass_t, pass_f):
-    pass_time_str = pass_t.utc_datetime().strftime("%Y-%m-%d %H:%M:%S")
+
+    if not is_valid(email):
+        return False
+    
+    pass_time = pass_t.utc_datetime().strftime("%Y-%m-%d %H:%M:%S")
     
     payload = {
         "email": email,
-        "pass_time_utc": pass_time_str,
+        "pass_time_utc": pass_time,
         "pass_info": pass_f
     }
     
@@ -35,12 +50,22 @@ def send_email(email, pass_t, pass_f):
         print("dispatched alert to render worker:", response.json())
         return True
     except Exception as e:
-        print(f"failed: {e}")
         return False
 
 def process(email, lat, lon):   
+
+    try:
+        valid = validate_email(email, check_deliverability=True)
+        target_email = valid.normalized
+    except EmailNotValidError as e:
+        return False, str(e)
+    except Exception as e:
+        return False, f"Email validation error: {str(e)}"
+
+    
     t_start = ts.now()
     observer = wgs84.latlon(lat, lon)
+
     
     for day_offset in range(14):
         start_ = t_start.tt + day_offset
