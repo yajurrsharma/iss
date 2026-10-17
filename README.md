@@ -29,7 +29,9 @@ To ensure you ALWAYS get a view, the program first searches for any passes in th
 
 ## Feature 
 
-I've also added a feature, ~unfortunately, in the current stages has to be configured by the user~ that is the *email notification system*. Basically, when the program finds the next visible pass (whether it be day or night), it'll send you an email when the pass is happening, so you can look out and above your horizon, to, well, see the event! (get it? horizon event? okay yeah ill stop)
+I've also added a feature, ~unfortunately, in the current stages has to be configured by the user~ that is the *email notification system*. Basically, when the program finds the next visible pass (whether it be day or night), it'll send you an email 30 minutes before the pass is happening, so you can look out and above your horizon, to, well, see the event! (get it? horizon event? okay yeah ill stop)
 
-and to end it, i'd say that this project is just there for some fun and banter, and to revisit some old projects that i've wanted to work on/have worked on. this project was also made for the HackClub Expedition, and took around 6 hours over the span of 2 days to build!
+---
+
+and to end it, i'd say that this project is just there for some fun, and to revisit some old projects that i've wanted to work on/have worked on. this project was also made for the HackClub Expedition, and took around 6 hours over the span of 2 days to build!
 
